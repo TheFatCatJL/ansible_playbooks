@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  ansible:
+    tty: true
+    stdin_open: true
+    container_name: ansible
+    build: 
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    networks:
+      - ansible-network
+    volumes:
+      - ..:/playbooks
+  remote_host_one:
+    container_name: remote-host-one
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile.ubuntu
+    networks:
+      - ansible-network
+  remote_host_two:
+    container_name: remote-host-two
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile.ubuntu
+    networks:
+      - ansible-network
+
+networks:
+  ansible-network:

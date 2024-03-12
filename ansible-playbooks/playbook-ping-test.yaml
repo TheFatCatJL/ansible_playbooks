@@ -1,0 +1,10 @@
+- name: ping test
+  # this has to match the [test] in inventory.ini
+  hosts: test
+  tasks:
+   - name: Ping my hosts
+     ansible.builtin.ping:
+
+   - name: Print message
+     ansible.builtin.debug:
+       msg: Hello world

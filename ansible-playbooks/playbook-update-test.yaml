@@ -1,0 +1,9 @@
+- name: update test
+  # this has to match the [test] in inventory.ini
+  hosts: test
+  tasks:
+    - name: Apt Update
+      shell: apt update --fix-missing
+    - name: Apt Upgrade
+      shell: apt upgrade --fix-missing
+  

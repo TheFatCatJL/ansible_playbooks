@@ -1,0 +1,25 @@
+FROM ubuntu:latest
+
+RUN apt update --fix-missing && apt upgrade -y
+RUN apt install -y openssh-server
+RUN mkdir /var/run/sshd
+RUN echo 'root:password123' | chpasswd
+
+# SED
+# /s start subsitution
+# substitute all instances of PermitRootLogin prohibit-password to PermitRootLogin yes
+# -i using input file /etc/ssh/sshd_config
+RUN sed 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' -i /etc/ssh/sshd_config
+
+# SED
+# using regex
+# changes session required pam_loginuid.so to session optional pam_loginuid.so
+# Note can also be s/session required pam_loginuid.so/session pam_loginuid.so/
+# However, due to how spacing is handled in the origin sentence, we cannot just search and expect it will work.
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
+ENV NOTVISIBLE "in users profile"
+RUN echo "export VISIBLE=now" >> /etc/profile
+
+EXPOSE 22
+CMD ["/usr/sbin/sshd","-D"]
