@@ -1,0 +1,14 @@
+- name: update test
+  # this has to match the [test] in inventory.ini
+  hosts: all
+  connection: local
+  tasks:
+    - name: SSH into host
+      shell: ../ansible-secret/login.sh {{inventory_hostname}} {{ ansible_host }}
+      register: result
+      args:
+        executable: /bin/bash
+    - name: Show output of command
+      debug:
+        msg: "{{ result }}"
+  

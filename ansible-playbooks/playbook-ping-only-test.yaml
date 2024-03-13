@@ -1,0 +1,7 @@
+- name: ping test
+  # this has to match the [test] in inventory.ini
+  hosts: all
+  connection: local
+  tasks:
+   - name: Ping my hosts
+     ansible.builtin.ping:
