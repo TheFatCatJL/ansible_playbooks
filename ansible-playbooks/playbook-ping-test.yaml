@@ -1,10 +1,16 @@
-- name: ping test
-  # this has to match the [test] in inventory.ini
+# Note the built in ping is more like a "can we run ansible test" rather than the good old ping 
+- name: Ansible Ping Test
   hosts: test
   tasks:
-   - name: Ping my hosts
+   - name: Ping my hosts Ansiblely
      ansible.builtin.ping:
 
-   - name: Print message
-     ansible.builtin.debug:
-       msg: Hello world
+# To execute the good old ping...
+- name: Good Old Ping Test
+  hosts: test
+  connection: local
+  tasks:
+   - name: Ping my hosts the good old way
+     shell: ping -c 2 {{ ansible_host}}
+     failed_when: router_ping.rc == 1 or router_ping.rc > 2
+     register: router_ping

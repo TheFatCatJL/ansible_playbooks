@@ -27,29 +27,29 @@ ansible-playbook -i ansible-hosts/inventory.ini ansible-playbooks/playbook-ping-
 
 # You will see the following output
 
-PLAY [ping test] ***************************************************************************************************************************************************************************
+PLAY [Ansible Ping Test] **************************************************************************************************************************************************
 
-TASK [Gathering Facts] *********************************************************************************************************************************************************************
+TASK [Gathering Facts] ****************************************************************************************************************************************************
 ok: [host1]
 ok: [host2]
 
-TASK [Ping my hosts] ***********************************************************************************************************************************************************************
+TASK [Ping my hosts Ansiblely] ********************************************************************************************************************************************
 ok: [host1]
 ok: [host2]
 
-TASK [Print message] ***********************************************************************************************************************************************************************
-ok: [host1] => {
-    "changed": false,
-    "msg": "Hello world"
-}
-ok: [host2] => {
-    "changed": false,
-    "msg": "Hello world"
-}
+PLAY [Good Old Ping Test] *************************************************************************************************************************************************
 
-PLAY RECAP *********************************************************************************************************************************************************************************
-host1                      : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
-host2                      : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+TASK [Gathering Facts] ****************************************************************************************************************************************************
+ok: [host1]
+ok: [host2]
+
+TASK [Ping my hosts the good old way] *************************************************************************************************************************************
+changed: [host1]
+changed: [host2]
+
+PLAY RECAP ****************************************************************************************************************************************************************
+host1                      : ok=4    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+host2                      : ok=4    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0 
 ```
 
 ```bash
@@ -100,10 +100,10 @@ host2                      : ok=2    changed=0    unreachable=0    failed=0    s
 ```bash
 # Now using ansible vault, we encrypt the "password file" (Note still a bad idea if you expose to the world)
 # We now use a bash script to run a ansible-vault view using a vault id (here we put in a .ansible-password file <<< Super bad idea and lazy but only for the same of understanding how this is used)
-# The same bash script will run our bash.
-# You can also use this method to run other bash scripts that gets pwd from other servers.
+# The same bash script will also run the rest our commands.
+# You can also modify this script to curls that gets pwd from other servers.
 
-# NOTE this is definitely not the typical "ansible way" of doing it
+# NOTE this is definitely not the typical "ansible way" of doing it BUT its very easy to setup without excessive meddling with ansible.
 
 ansible-playbook -i ansible-hosts/inventory-no-password.yaml ansible-playbooks/playbook-update-test-using-vault.yaml
 
@@ -199,4 +199,4 @@ host2                      : ok=3    changed=1    unreachable=0    failed=0    s
 
 ## Using Ansible "Responsibly"
 
-While Ansible containers can really be prop up for occasional uses, putting it into regular use will require more thoughts about the [ENTIRE ARTFACT STRUCTURE.](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse.html)
+While Ansible containers can really be prop up for occasional uses, putting it into regular use will require more thoughts about the [ENTIRE ARTIFACT STRUCTURE.](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse.html)
