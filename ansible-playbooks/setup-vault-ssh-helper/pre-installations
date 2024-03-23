@@ -1,0 +1,19 @@
+# Check if sudo is installed
+if [[ ! $(apt -qq list sudo 2> /dev/null | grep "installed") ]]; then
+    echo " sudo is not installed. Cannot proceed unless this is a root user."
+    apt-get update 2>&1 >/dev/null
+    apt-get sudo -y 
+else
+    echo "sudo is installed. We assume this user can sudo."
+    sudo apt-get update 2>&1 >/dev/null
+fi
+
+# Check if wget is installed
+if [[ ! $(apt -qq list wget 2> /dev/null | grep "installed") ]]; then
+    sudo apt-get install -y wget 2>&1 >/dev/null
+fi
+
+# Check if unzip is installed
+if [[ ! $(apt -qq list unzip 2> /dev/null | grep "installed") ]]; then
+    sudo apt-get install -y unzip 2>&1 >/dev/null
+fi

@@ -1,0 +1,59 @@
+# Set up target VM here
+- name: Install SSH Helper on THIS TARGET host
+  hosts: localhost
+  gather_facts: false
+  tasks:
+  - name: Add a host alias
+    add_host:
+      hostname: 'my-target-vm'
+      ansible_host: '192.168.1.88'
+      ansible_port: '22'
+
+- name: Install SSH Helper on VM
+  hosts: my-target-vm
+  connection: local
+  vars:
+    # FOR TARGET MACHINE
+    # username & password (make sure this user has root privilege or can sudo without password!)?
+    username: username
+    password: password
+    # For Hashicorp Vault server 
+    vault_url: http://myhashivault.org
+    # Note to just install the agent without ANY testing you need to comment out the testing task at the bottom
+    # You don't have to supply the vault server username and password below then.
+    vault_username: vault_username
+    vault_password: vault_password
+  tasks:  
+    - name: Working on apt pre-installations...
+      shell: sshpass -p {{ password }} ssh {{ username }}@{{ ansible_host }} -o StrictHostKeyChecking=no "bash -s" < ./pre-installations.sh {{ username }} {{ password }}
+      register: pre_install_result
+    - name: Apt pre-installations result
+      debug:
+        msg: "{{ pre_install_result }}"
+    - name: Working on ssh-helper installation...
+      shell: sshpass -p {{ password }} ssh {{ username }}@{{ ansible_host }} -o StrictHostKeyChecking=no "bash -s" < ./install-vault-ssh-helper.sh {{ username }} {{ vault_url }}
+      register: vault_ssh_install_result
+    - name: ssh-helper installation result
+      debug:
+        msg: "{{ vault_ssh_install_result }}"
+    - name: Working on pam and sshd config setup...
+      shell: sshpass -p {{ password }} ssh {{ username }}@{{ ansible_host }} -o StrictHostKeyChecking=no "bash -s" < ./pam-sshd-setup.sh
+      register: pam_sshd_setup_result
+    - name: pam and sshd setup result
+      debug:
+        msg: "{{ pam_sshd_setup_result }}"
+    - name: Final Restart SSHD
+      shell: sshpass -p {{ password }} ssh {{ username }}@{{ ansible_host }} -o StrictHostKeyChecking=no "sudo systemctl restart sshd.service"
+      # Well there are many hacky ways of making this pass - but i choose the painless way because I am doing testing below
+      register: restart_result
+      failed_when:
+        - restart_result.stderr_lines | length > 0
+    - name: SSH into host via vault
+      shell: ./login-test.sh {{ vault_username }} {{ vault_password }} {{ ansible_host }} {{ vault_url }}
+      register: result
+      args:
+        executable: /bin/bash
+    - name: Show output of vault ssh test
+      debug:
+        msg: "{{ result }}"
+    

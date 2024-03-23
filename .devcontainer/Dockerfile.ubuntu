@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 
 RUN apt update --fix-missing && apt upgrade -y
-RUN apt install -y openssh-server
+RUN apt install -y openssh-server sudo wget unzip zip
 RUN mkdir /var/run/sshd
 RUN echo 'root:password123' | chpasswd
 
